@@ -284,13 +284,208 @@ console.log(bar.getName())
 2. 普通函数函数内部的this指向全局window。(严格模式下是undefind)
 3. 通过对象内部调用的方法，该方法的这行上下文中的this指向该对象本身。
 
-
-
-
-
 ## 浏览器中页面循环系统
 
-## 浏览器中的安全
+### 事件循环
+
+线程在执行完实现安排好的任务后就会推出线程，然而不是所有的任务都是实现安排好的，线程在运行的过程中，能接受新的任务，就学要采用事件循环来监听。
+
+### 消息队列
+
+消息队列中的任务是通过事件循环系统来执行的
+
+[WHATWG 规范]: https://html.spec.whatwg.org/multipage/webappapis.html#event-loop-processing-mode
+
+中定义了事件循环的标准；
+
+- 一种数据结构(FIFO)，存放要执行的任务。
+- 其他线程可以往消息队列添加任务，由于是多个线程操作同一个消息队列，所以在添加任务和取出任务时还会加上一个**<u>同步锁</u>**？？
+
+- **<u>渲染进程</u>**中，有一个IO线程专门用来接受其他**<u>进程</u>**传进来的消息，然后添加到消息队列的尾部。
+- 渲染主进程会循环从消息队列头部读取、执行任务。
+
+页面主线程会设置一个标志，每次执行完一个任务，就回去判断是有推出标志。如果有直接退出线程。
+
+### 延迟队列
+
+为了实现定时器setTimeout功能，浏览器新增了延迟队列。
+
+执行时机：消息队列中的一个任务完成后。
+
+1. 当前任务执行太久，会影响 到**<u>期定</u>**时器任务的执行；
+2. setTimeout如果存在嵌套，会延长执行时间。chromium实现：定时器嵌套调用5层以上，最小调用间隔设置为4ms；
+3. 未激活页面，setTimeout最小间隔1000ms；
+4. 延迟时间最大值，32bit最大能存储的数字2147483647 毫秒（24.8天），当大于这个值时，将被设置为0；
+5. setTimeout设置的回调函数中this被设置为window，严格模式下undefined;
+
+### 系统调用栈
+
+只不过系统调用栈是 Chromium 的开发语言 C++ 来维护的，xhr就是通过调用栈异步回调，网络进程通过IPC把任务添加到消息队列。
+
+### 宏任务
+
+- 渲染事件（解析DOM、计算布局、绘制）；
+- 用户交互事件；
+- javascript脚步执行事件；？？
+- 网络请求完成、文件读取完成事件；
+- setTimeout
+
+### 微任务
+
+- MutationObserver
+- Prmoise
+
+###  协程
+
+- 协程是一种比线程更轻量级的存在，不被操作系统内核控制，完全由程序控制，不会像切换进程那样消耗性能；
+
+- 一个线程可以拥有多个协程；
+
+  ```javascript
+  
+  function* genDemo() {
+      console.log("开始执行第一段")
+      yield 'generator 1'
+  
+      console.log("开始执行第二段")
+      yield 'generator 2'
+  
+      console.log("开始执行第三段")
+      yield 'generator 3'
+  
+      console.log("执行结束")
+      return 'generator 4'
+  }
+  
+  console.log('main 0')
+  let gen = genDemo()
+  console.log(gen.next().value)
+  console.log('main 1')
+  console.log(gen.next().value)
+  console.log('main 2')
+  console.log(gen.next().value)
+  console.log('main 3')
+  console.log(gen.next().value)
+  console.log('main 4')
+  ```
+
+  1. 通过调用生成器genDemo来创建一个协程gen，gen协程并没有立即执行；
+  2. 通过.next可调用内部执行协程；
+  3. 通过yield关键字可以暂停gen协程的执行，并返回主要信息，把控制权交给主线程；
+  4. 
+
+## 浏览器中的页面
+
+### JavaScript如何影响DOM树的构建
+
+#### 什么是DOM
+
+从网络传给渲染渲染引擎的HTML字节流是无法直接被渲染引擎理解的，要专程渲染引擎能够理解的内部结构（DOM）。
+
+#### 如何生成DOM
+
+- 渲染引擎内部，又一个HTML解析器（HTMLParser）的模块，将HTML字节流转成DOM结构。
+- 网络进程会与渲染进程之间建立一个数据共享的管道，解析器会一边接受一边解析。
+
+#### 怎么解析DOM
+
+1. 通过分词器将字节流转换成Token；
+2. 将Token转成DOM节点，并插入到DOM树中；
+
+#### JavaScript如何影响DOM的生成
+
+- 解析器遇到解析道script标签，此时JavaScript引擎会介入，并暂停解析，知道脚步执行完毕；
+- 遇到JavaScript文件，需要先下载代码文件，受网络环境、文件大小影响，会阻塞DOM解析；如果文件中没有操作DOM相关代码，就可以将脚步设置为异步加载，`async`和`defer`来标记；
+- 如果脚步中，有操作CSSOM的语句，引擎会选解析语句之上所有的CSS样式；如果引用了外部的CSS文件，那么在执行脚步之前，要需要等待外部CSS文件下载完成，解析生成CSSOM之后，才能执行脚步；
+
+
+
+## 浏览器安全
+
+### 同源策略
+
+相同的URL协议，端口，域名。
+
+#### 限制
+
+1. DOM层面
+
+   ```javascript
+   let pdom = opener.documentpdom.body.style.display = "none"
+   ```
+
+   
+
+2. 数据层面:cookie:,IndexDB,LocalStorage
+
+3. 网络请求
+
+#### 方便
+
+1.  页面中嵌入第三方资源
+
+2. 跨域资源共享和跨文档消息机制（window.postMessage）
+
+   
+
+### 跨站脚步攻击（XSS）
+
+（Cross site scripting）为了重命名故简称“XSS”。
+
+#### 类型
+
+- 存储型
+  利用站点漏洞，将一段恶意代码js代码存储到网站的数据库中；
+
+- 反射性
+
+  ```xml
+  http://localhost:3000/?xss=<script>foo</script>
+  ```
+
+  服务器接收到恶意代码的请求，又被恶意代码反射给浏览器。
+
+- DOM
+  协议网络在页面传输的过程中修改HTML。
+
+#### 防范
+
+- 脚步进行转码
+- 充分利用CSP
+  - 限制下载其他域名的脚步；
+  - 禁止向第三方提交数据；
+  - 禁止执行行内脚步和未授权的脚步；
+  - 提供上报机制，发现xss攻击；
+- 利用HttpOnly属性（无法脚步读取，修改）
+
+### CSRF攻击（Cross-site request forgery）
+
+又名“**跨站请求伪造**”，打开黑客的网站，利用用户的登录状态发起请求。
+
+#### 攻击对象
+
+- 目标站点有CSRF漏洞；
+- 用户登录过目标站点，并且保持登录状态；
+
+#### 防范
+
+- 设置cookie的SameSite模式（Strict，Lax，None）
+- 验证请求的来源站点（Referer，Origin）
+- CSRF Token，浏览器索取token（第三方站点无法获取），请求的时候带上。
+
+## 浏览器中的网络
+
+### HTTP
+
+### HTTPS
+
+
+
+
+
+
+
+
 
 
 
