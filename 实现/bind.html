@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+    var ban = {
+        value: 'ban'
+    }
+    var value = 'foo'
+    Function.prototype.myBind = function(context, arr) {
+        const self = this; 
+        //判断类型
+        if (typeof this !== 'function') throw new Error('请输入一个函数')
+        //切割参数
+        var args = Array.prototype.slice.call(arguments, 1)
+        var Tem = function() {}
+        var bound = function() {
+            var bindArgs = Array.prototype.slice.call(arguments)
+            console.log(this instanceof Tem, this, context)
+            return self.apply(this instanceof Tem ? this : context, args.concat(bindArgs))
+        }
+        Tem.prototype = this.prototype
+        bound.prototype = new Tem(); // bound.prototype.__proto__ => Tem.prototype
+        return bound;
+    }
+    function foo(name,height) {
+        console.log(this.value, name, height)
+    }
+    foo.prototype.test = 1
+    var son = foo.myBind(ban,'rahim', 180)
+    var son1 = new son();
+
+    </script>
+</body>
+</html>

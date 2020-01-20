@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    var value = 'win'
+    var ban = {
+      value: 'ban'
+    }
+    Function.prototype.myCall = function (context) {
+      //1. call(null)可以不穿，默认为window
+      var context = context || window
+      //2. 将需要this（foo函数）绑定到context(ban对象)下，改变他的this指向
+      context.fn = this;
+      var args = [];
+      for (var i = 1; i < arguments.length; i++) {
+        args.push(`arguments[${i}]`)
+      }
+      //3.参数遍历，不实用es6语法
+      var result = eval('context.fn(' + args + ')')
+      //4.删除已用方法
+      delete context.fn
+      //5.返回内容
+
+      return result
+    }
+    function foo(name, height) {
+      console.log(this.value, name, height)
+    }
+    foo.myCall(ban, 'rahim', '180')
+  </script>
+</body>
+
+</html>

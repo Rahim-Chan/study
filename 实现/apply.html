@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+    var ban = {
+        value: 'ban'
+    }
+    var value = 'foo'
+    Function.prototype.myApply = function(context, arr) {
+        var context = context || window;
+        context.fn = this;
+        var result; 
+        if (!arr) {
+            result = context.fn()
+        } else {
+            var args = []
+            for(var i=0; i<arr.length;i++) {
+                args.push('arr['+i+']')
+            }
+            console.log(args)
+            result = eval('context.fn('+ args +')')
+        }
+        delete context.fn
+        return result
+    }
+    function foo(name,height) {
+        console.log(this.value, name, height)
+    }
+    foo.myApply(ban, ['rahim', '180'])
+    </script>
+</body>
+</html>
