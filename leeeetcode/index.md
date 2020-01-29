@@ -39,3 +39,25 @@ var addBinary = function(a, b) {
 
 
 
+# 删除链表重复性（有序）
+
+## 考察
+
+链表的操作;时间复杂程度O(n) ，空间复杂程度O(1);
+
+## step
+
+```javascript
+var deleteDuplicates = function(head) {
+    var cur = head
+    while(cur && cur.next) {
+        if (cur.val === cur.next.val) {
+            cur.next = cur.next.next
+        } else {
+            cur = cur.next
+        }
+    }
+    return head
+};
+```
+
