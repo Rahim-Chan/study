@@ -12,7 +12,11 @@
         value: 'ban'
     }
     var value = 'foo'
-    Function.prototype.myBind = function(context, arr) {
+    //判断类型
+    //切割参数slice（arguments，1） 剔除第一个
+    //创建函数Tem，原型对象指向this的原型对象
+    //bound存放
+    Function.prototype.myBind = function(context) {
         const self = this; 
         //判断类型
         if (typeof this !== 'function') throw new Error('请输入一个函数')
@@ -20,19 +24,25 @@
         var args = Array.prototype.slice.call(arguments, 1)
         var Tem = function() {}
         var bound = function() {
-            var bindArgs = Array.prototype.slice.call(arguments)
-            console.log(this instanceof Tem, this, context)
+            var bindArgs = Array.prototype.slice.call(arguments)//数组化
+            // 当作为构造函数时，this 指向实例，此时结果为 true，将绑定函数的 this 指向该实例，可以让实例获得来自绑定函数的值
+            // 以上面的是 demo 为例，如果改成 `this instanceof fBound ? null : context`，实例只是一个空对象，将 null 改成 this ，实例会具有 habit 属性
+            // 当作为普通函数时，this 指向 window，此时结果为 false，将绑定函数的 this 指向 context
+            // new 调用时候 this 指向 实例，否则指向 window 
             return self.apply(this instanceof Tem ? this : context, args.concat(bindArgs))
         }
         Tem.prototype = this.prototype
         bound.prototype = new Tem(); // bound.prototype.__proto__ => Tem.prototype
         return bound;
     }
+
     function foo(name,height) {
         console.log(this.value, name, height)
     }
+    
     foo.prototype.test = 1
-    var son = foo.myBind(ban,'rahim', 180)
+    var son = foo.myBind(ban,'rahim')
+    // son('140')
     var son1 = new son();
 
     </script>

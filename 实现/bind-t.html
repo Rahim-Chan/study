@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        Function.prototype.myBind = function(context) {
+            var self = this;
+            //判断this是不是函数
+            if (typeof this !== 'function') throw new Error('input a function')
+            //切割参数
+            var args = Array.prototype.slice.call(arguments, 1)
+
+            var Tem = function() {}
+            Tem.prototype = self.prototype
+
+            var bound = function () {
+                const arfterBindArgs = Array.prototype.slice.call(arguments)
+                return self.apply(this instanceof Tem ? this : context, args.concat(arfterBindArgs))
+            }
+
+            bound.prototype = new Tem()
+            return bound
+
+        }
+        var ban = {
+            name: 1
+        }
+        function foo(weight,height, money) {
+            console.log(this.name, { weight,height, money })
+        }
+
+        const newFoo = foo.myBind(ban, '140kg', '180cm')
+        
+        const fs = new newFoo('100000dollars')
+
+        // new newFoo('100000000元')
+    </script>
+</body>
+</html>

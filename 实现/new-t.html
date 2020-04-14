@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<script>
+    function objNew() {
+        var obj = new Object(null);
+        var Constructor = Array.prototype.shift.call(arguments)//arguments去掉一参数
+        obj.__proto__ = Constructor.prototype;
+        var result = Constructor.apply(obj, arguments);
+        return typeof result === 'object' ? result : obj
+
+    }
+
+    function Doris(d) {
+        // console.log(d)
+        // return {}
+    }
+    Doris.prototype.name = 'Doris'
+    var a = new Doris('foo')
+    console.log(a.prototype)
+    // console.log(a.name)
+    // console.log(Doris.prototype.name)
+    console.log(a)
+</script>
+</body>
+</html>

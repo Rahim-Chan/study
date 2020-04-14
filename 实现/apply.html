@@ -12,6 +12,10 @@
         value: 'ban'
     }
     var value = 'foo'
+    // apply 的功能
+    //1.改变this的指向（默认window） 2.参数需要是数组
+    // 不传入第一个参数，那么默认为 window
+    // 改变了 this 指向，让新的对象可以执行该函数。那么思路是否可以变成给新的对象添加一个函数，然后在执行完以后删除？
     Function.prototype.myApply = function(context, arr) {
         var context = context || window;
         context.fn = this;
@@ -23,7 +27,6 @@
             for(var i=0; i<arr.length;i++) {
                 args.push('arr['+i+']')
             }
-            console.log(args)
             result = eval('context.fn('+ args +')')
         }
         delete context.fn

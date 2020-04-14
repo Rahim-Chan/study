@@ -122,3 +122,36 @@ var merge = function(nums1, m, nums2, n) {
 };
 ```
 
+## 杨辉三角
+
+给定一个非负整数 *numRows，*生成杨辉三角的前 *numRows* 行。
+
+通过上一行的数据左右错开，空位补零，相加成新的一行；
+
+### step
+
+10 + 01 => 11; 110+011=> 121
+
+```javascript
+/**
+ * @param {number} numRows
+ * @return {number[][]}
+ */
+var generate = function(numRows) {
+    if (numRows ===0 )return []
+    let arr = [[1]]
+    while(arr.length < numRows) {
+        var tg = arr[arr.length-1];
+        var len = tg.length;
+        var tem = []
+        for(var i=0;i<=tg.length;i++){
+            var a = tg[i]!==undefined? tg[i]:0
+            var b = tg[i-1] !==undefined? tg[i-1]:0
+            tem.push(+a + +b)
+        }
+        arr.push(tem)
+    }
+    return arr
+};
+```
+
