@@ -275,14 +275,33 @@ console.log(bar.getName())
 除了get、set函数能访问到的地方，称之为foo函数的闭包。
 最下面的 Global 就是指全局作用域，从“Local–>Closure(foo)–>Global”就是一个完整的作用域链。
 
-### this
+### THIS的指向
 
-改变this的指向
+按照顺序判断`this`的绑定对象：
 
-1. this是不会继承的。
+1. 有 `new`调用：绑定到新创建的对象
+2. 由`call`或`apply`、`bind`调用：绑定到指定的对象
+3. 有上下文对象调用：绑定到上下文对象
+4. 默认全局对象
 
-2. 普通函数函数内部的this指向全局window。(严格模式下是undefind)
-3. 通过对象内部调用的方法，该方法的这行上下文中的this指向该对象本身。
+​	MDN上这样写：
+
+> In most cases, the value of this determined by how a function is called.
+>
+> 在绝大多数情况下，怎么调用函数的值决定了this的值。
+
+**结论： this的指向，是在调用该函数时根据执行上下文所动态确定的！**
+
+##### call、apply的第一个参数
+
+- `call`，`apply`作用之一就是用来修改函数中的`this`指向为第一个参数的。 第一个参数是`undefined`或者`null`，非严格模式下，是指向`window`。在严格模式下指向的是`undefined`。
+- 如果输入的第一个参数是原始值，在非严格模式下，那么this将指向原始值的自动包装对象；在严格模式下是指向原始值；
+
+[apply的实现](../实现/apply-demo.html)
+
+[call的实现](../实现/call-demo.html)
+
+
 
 ## 浏览器中页面循环系统
 
@@ -313,10 +332,16 @@ console.log(bar.getName())
 执行时机：消息队列中的一个任务完成后。
 
 1. 当前任务执行太久，会影响 到**<u>期定</u>**时器任务的执行；
+
 2. setTimeout如果存在嵌套，会延长执行时间。chromium实现：定时器嵌套调用5层以上，最小调用间隔设置为4ms；
+
 3. 未激活页面，setTimeout最小间隔1000ms；
+
 4. 延迟时间最大值，32bit最大能存储的数字2147483647 毫秒（24.8天），当大于这个值时，将被设置为0；
+
 5. setTimeout设置的回调函数中this被设置为window，严格模式下undefined;
+
+   
 
 ### 系统调用栈
 
