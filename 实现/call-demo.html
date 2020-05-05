@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    var value = 'win'
+    var ban = {
+      value: 'ban'
+    }
+    function getThis () { return  this }
+    function generateFunctionCode(argsArrayLength) {
+      var code = 'arguments[0][arguments[1]](';
+      for (var i=0; i < argsArrayLength; i++) {
+        if (i > 0) {
+          code += ',';
+        }
+        code += 'arguments[2][' +  i +']'
+      }
+      code += ')'
+      return code;
+    }
+    Function.prototype.myApply = function (thisArg, argsArray) {
+      // 先判断this、thisArg,再判断argsArray
+      //1判断是否为函数、isCallable
+      if (typeof this !== 'function') {
+        throw new TypeError(this + 'is not a function')
+      }
+      //2argsArray有效性
+      if (arguments === null || typeof argsArray === 'undefined') {
+        argsArray = []
+      }
+      //args is Object
+      if (argsArray !== new Object(argsArray)) {
+        throw new TypeError('create called on non-object')
+      }
+      if (thisArg === null || typeof thisArg === 'undefined') {
+        thisArg = getThis()
+      }
+      //convert this to object
+      thisArg = new Object(thisArg)
+      //把this函数赋值进thisArg
+      //唯一函数名称
+      var __fn = '__' + new Date().getTime()
+      //保存重复命名函数
+      var originalVal = thisArg[__fn]
+      //是否有值
+      var hasOriginalVal = thisArg.hasOwnProperty(__fn)
+      //函数调用执行
+      thisArg[__fn] = this;
+      //生成执行函数、不使用eval;
+      var code = generateFunctionCode(argsArrayLength.length)
+      //excuation function 
+      var resutl = (new Function(code))(thisArg, __fn, argsArray);
+      delete thisArg[__fn];
+      if (hasOriginalVal) {
+        thisArg[__fn] = originalVal
+      }
+      return resutl
+    }
+    Function.prototype.myCall = function (thisArg) {
+      var argsArray = [];
+      var argumentsLength = arguments.length;
+      for (var i=0; i<arguments.length-1; i++) {
+        argsArray[i] = arguments[i+1]
+      }
+      return this.myApply(thisArg, argsArray)
+    }
+    function foo(name, height) {
+      console.log(this.value, name, height)
+    }
+    foo.myCall(ban, 'rahim', '180')
+  </script>
+</body>
+
+</html>
