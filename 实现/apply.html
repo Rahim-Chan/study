@@ -1,41 +1,61 @@
+<!-- apply 实现第一遍 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 </head>
 <body>
     <script>
-    var ban = {
-        value: 'ban'
-    }
-    var value = 'foo'
-    // apply 的功能
-    //1.改变this的指向（默认window） 2.参数需要是数组
-    // 不传入第一个参数，那么默认为 window
-    // 改变了 this 指向，让新的对象可以执行该函数。那么思路是否可以变成给新的对象添加一个函数，然后在执行完以后删除？
-    Function.prototype.myApply = function(context, arr) {
-        var context = context || window;
-        context.fn = this;
-        var result; 
-        if (!arr) {
-            result = context.fn()
-        } else {
-            var args = []
-            for(var i=0; i<arr.length;i++) {
-                args.push('arr['+i+']')
-            }
-            result = eval('context.fn('+ args +')')
+        function foo(wife) {
+            console.log(this)
+            console.log(this.name + '’s wife is' + wife)
         }
-        delete context.fn
-        return result
-    }
-    function foo(name,height) {
-        console.log(this.value, name, height)
-    }
-    foo.myApply(ban, ['rahim', '180'])
+        function getGlobalObject () {
+            return this;
+        }
+        function generateFunctionCode(length) {
+            var code  = 'return arguments[0][arguments[1]]('
+            for (var i=0; i<length;i++) {
+                if (i > 0) {
+                    code += ',';
+                }
+                code += 'arguments[2][' + i + ']'
+            }
+            code += ")"
+            return code
+        }
+        Function.prototype.applyFn = function(thisArg, argsArray) {
+            if (typeof this !== 'function') {
+                throw new TypeError(this + 'is not function')
+            }
+            if (argsArray === null || typeof argsArray === 'undefined') {
+                argsArray = []
+            }
+            if (argsArray !== new Object(argsArray)) {
+                throw new TypeError('CreateListFormArrayLike called on non-object')
+            }
+            
+            if (thisArg === null || typeof thisArg === 'undefined') {
+                thisArg = getGlobalObject()
+            }
+            var __fn = "__" + new Date().getTime()
+            var originalVal = thisArg[__fn]
+            var hasOriginalVal = thisArg.hasOwnProperty(__fn);
+            thisArg[__fn] = this;
+            var code = generateFunctionCode(argsArray.length)
+            var result = (new Function(code))(thisArg, __fn, argsArray)
+            delete thisArg[__fn]
+            if (hasOriginalVal) {
+                thisArg[__fn] = originalVal;
+            }
+            return result
+
+            
+        }
+        let a = { name: 'crx'}
+        foo.applyFn(a, ['cxy'])
     </script>
 </body>
 </html>

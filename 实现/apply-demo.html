@@ -56,8 +56,6 @@
             // ES6版
             // var result = thisArg[__fn](...args);
             var code = generateFunctionCode(argsArray.length);
-            console.log(code)
-            console.log(arguments[0],arguments[1])
             var result = (new Function(code))(thisArg, __fn, argsArray);
             delete thisArg[__fn];
             if (hasOriginalVal) {

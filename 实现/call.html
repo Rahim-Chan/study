@@ -1,42 +1,66 @@
-<!doctype html>
+<!-- call实现5/10 -->
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport"
-    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
 </head>
-
 <body>
-  <script>
-    var value = 'win'
-    var ban = {
-      value: 'ban'
-    }
-    Function.prototype.myCall = function (context) {
-      //1. call(null)可以不穿，默认为window
-      var context = context || window
-      //2. 将需要this（foo函数）绑定到context(ban对象)下，改变他的this指向
-      context.fn = this;
-      var args = [];
-      for (var i = 1; i < arguments.length; i++) {
-        args.push(`arguments[${i}]`)
-      }
-      //3.参数遍历，不实用es6语法
-      var result = eval('context.fn(' + args + ')')
-      //4.删除已用方法
-      delete context.fn
-      //5.返回内容
-
-      return result
-    }
-    function foo(name, height) {
-      console.log(this.value, name, height)
-    }
-    foo.myCall(ban, 'rahim', '180')
-  </script>
+    <script>
+        function foo(wife, wife1) {
+            console.log(this.name + '‘s wife is ' + wife + ',' + wife1)
+        }
+        function getGlobalObj() {
+            return this;
+        }
+        function generateFUnctionCode(length) {
+            var code = 'return arguments[0][arguments[1]](';
+            for(var i=0;i<length;i++) {
+                if (i > 0) {
+                    code += ','
+                }
+                code += 'arguments[2][' + i +']'
+            }
+            code += ')'
+            return  code 
+        }
+        Function.prototype.applyFn = function(thisArg, argsArray) {
+            if (typeof this !== 'function') {
+                throw new TypeError(this + 'is not a function')
+            }
+            if (argsArray === null || typeof argsArray === 'undefined') {
+                argsArray = []
+            }
+            if (argsArray !== new Object(argsArray)) {
+                throw TypeError('CreateListFromArrayLike called on non-object')
+            }
+            if (thisArg === null || typeof thisArg === 'undefined') {
+                thisArg = getGlobalObj()
+            }
+            thisArg = new Object(thisArg)
+            var __fn = '__' + new Date().getTime();
+            var originalVal = thisArg[__fn];
+            var hasOriginalVal = thisArg.hasOwnProperty(__fn);
+            thisArg[__fn] = this;
+            var code = generateFUnctionCode(argsArray.length)
+            var result = (new Function(code))(thisArg, __fn, argsArray)
+            delete thisArg[__fn];
+            if (hasOriginalVal) {
+                thisArg[__fn] = originalVal;
+            }
+            return result
+        }
+        Function.prototype.callFn = function(thisArg) {
+            var args = []
+            for(var i=1; i<arguments.length; i++) {
+                args[i-1] = arguments[i]
+            }
+            var result = this.applyFn(thisArg, args)
+            return result
+        }
+        var my = { name: 'crx' }
+        foo.callFn(my, 'cyx', 'doris')
+    </script>
 </body>
-
 </html>

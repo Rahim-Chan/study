@@ -17,7 +17,7 @@
     }
     function getThis () { return  this }
     function generateFunctionCode(argsArrayLength) {
-      var code = 'arguments[0][arguments[1]](';
+      var code = 'return arguments[0][arguments[1]](';
       for (var i=0; i < argsArrayLength; i++) {
         if (i > 0) {
           code += ',';
