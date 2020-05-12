@@ -1,79 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 </head>
-
 <body>
     <script>
-        var ban = {
-            value: 'ban'
-        }
-        var value = 'foo'
-        // 第三版 实现new调用
-        Function.prototype.bindFn = function bind(thisArg) {
-            if (typeof this !== 'function') {
-                throw new TypeError(this + ' must be a function');
-            }
-            // 存储调用bind的函数本身
-            var self = this;
-            // 去除thisArg的其他参数 转成数组
-            var args = [].slice.call(arguments, 1);
-            var bound = function () {
-                // bind返回的函数 的参数转成数组
-                var boundArgs = [].slice.call(arguments);
-                var finalArgs = args.concat(boundArgs);
-                // new 调用时，其实this instanceof bound判断也不是很准确。es6 new.target就是解决这一问题的。
+        Function.prototype.myBind = function(thisArg) {
+           if (typeof this !== 'function') {
+               throw new TypeError(this + 'is not a function')
+           }
+           var args = [].slice.call(arguments, 1);
+           var self = this;
+           var bound = function() {
+                var finalArgs = args.concat(arguments)
                 if (this instanceof bound) {
-                    // 这里是实现上文描述的 new 的第 1, 2, 4 步
-                    // 1.创建一个全新的对象
-                    // 2.并且执行[[Prototype]]链接
-                    // 4.通过`new`创建的每个对象将最终被`[[Prototype]]`链接到这个函数的`prototype`对象上。
-                    // self可能是ES6的箭头函数，没有prototype，所以就没必要再指向做prototype操作。
-                    if (self.prototype) {
-                        // ES5 提供的方案 Object.create()
-                        // bound.prototype = Object.create(self.prototype);
-                        // 但 既然是模拟ES5的bind，那浏览器也基本没有实现Object.create()
-                        // 所以采用 MDN ployfill方案 https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/create
-                        function Empty() { }
-                        Empty.prototype = self.prototype;
-                        bound.prototype = new Empty();
-                    }
-                    // 这里是实现上文描述的 new 的第 3 步
-                    // 3.生成的新对象会绑定到函数调用的`this`。
-                    var result = self.apply(this, finalArgs);
-                    // 这里是实现上文描述的 new 的第 5 步
-                    // 5.如果函数没有返回对象类型`Object`(包含`Functoin`, `Array`, `Date`, `RegExg`, `Error`)，
-                    // 那么`new`表达式中的函数调用会自动返回这个新的对象。
-                    var isObject = typeof result === 'object' && result !== null;
-                    var isFunction = typeof result === 'function';
-                    if (isObject || isFunction) {
-                        return result;
-                    }
-                    return this;
+                    return self.apply(this, finalArgs)
+                } else {
+                    return self.apply(thisArg, finalArgs)
                 }
-                else {
-                    // apply修改this指向，把两个函数的参数合并传给self函数，并执行self函数，返回执行结果
-                    return self.apply(thisArg, finalArgs);
-                }
-            };
-            return bound;
+           }
+           if (self.prototype) {
+                function Empty() {}
+                Empty.prototype = self.prototype
+                bound.prototype = new Empty();
+            }
+           return bound
+
+        }
+        var ban = {
+            name: 1
+        }
+        function foo(weight,height, money) {
+            console.log(this.name, { weight,height, money })
         }
 
-        function foo(name, height) {
-            console.log(this.value, name, height)
-        }
+        const newFoo = foo.myBind(ban, '140kg', '180cm')
+        
+        const fs = new newFoo('100000dollars')
 
-        foo.prototype.test = 1
-        var son = foo.bindFn(ban, 'rahim')
-        // var son1 = son('140')
-        var son1 = new son();
-        console.log('son1', son1)
+        // new newFoo('100000000元')
     </script>
 </body>
-
 </html>
