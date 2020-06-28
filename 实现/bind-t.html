@@ -7,23 +7,26 @@
 </head>
 <body>
     <script>
-        Function.prototype.myBind = function(context) {
-            var self = this;
-            //判断this是不是函数
-            if (typeof this !== 'function') throw new Error('input a function')
-            //切割参数
-            var args = Array.prototype.slice.call(arguments, 1)
-
-            var Tem = function() {}
-            Tem.prototype = self.prototype
-
-            var bound = function () {
-                const arfterBindArgs = Array.prototype.slice.call(arguments)
-                return self.apply(this instanceof Tem ? this : context, args.concat(arfterBindArgs))
+        Function.prototype.myBind = function(thisArg) {
+           if (typeof this !== 'function') {
+               throw new TypeError(this + 'is not a function')
+           }
+           var args = [].slice.call(arguments, 1);
+           var self = this;
+           var bound = function() {
+                var finalArgs = args.concat(arguments)
+                if (this instanceof bound) {
+                    return self.apply(this, finalArgs)
+                } else {
+                    return self.apply(thisArg, finalArgs)
+                }
+           }
+           if (self.prototype) {
+                function Empty() {}
+                Empty.prototype = self.prototype
+                bound.prototype = new Empty();
             }
-
-            bound.prototype = new Tem()
-            return bound
+           return bound
 
         }
         var ban = {

@@ -44,8 +44,8 @@
             var originalVal = thisArg[__fn]
             var hasOriginalVal = thisArg.hasOwnProperty(__fn);
             thisArg[__fn] = this;
-            var code = generateFunctionCode(argsArray.length)
-            var result = (new Function(code))(thisArg, __fn, argsArray)
+            var code = generateFunctionCode(argsArray.length);
+            var result = (new Function(code))(thisArg, __fn, argsArray);
             delete thisArg[__fn]
             if (hasOriginalVal) {
                 thisArg[__fn] = originalVal;
