@@ -1,0 +1,79 @@
+# Webpack
+
+### HMR(HOT Module Replacement)
+
+- WDS与浏览器建立一个`WS`；当本地资源更新时，WDS会向浏览器推送更新，并带上构建时的`hash`，让客户端与上一次资源进行对比。对比出差异的时候先WDS发起`Ajax`请求来获取更改内容（文件列表、hash）,再借助这些信息继续发器`jsonp`请求获取该chunk的增量更新；
+- 获取到批量更新后怎么处理，由`HostModulePlugin`来完成，提供相关API可根据自身场景进行处理，e g `react-hot-loader`、`vue-loader`;
+
+## 提速
+
+- Module Federation 【基本思路：把依赖打包成一个bundle，然后打包项目时远程引入】
+- esbuild
+- 开启物理缓存
+
+## 优化策略
+
+四个大方向入手：缓存、多核、抽离以及拆分
+
+- 缓存 babel-loader开启缓存，不支持的话用cache-loader
+- 多核 happypack [thread-loader]
+- 抽离 
+  1. externals 更快，需要稳定的CDN，可以通过插件配置baseURL,name,version,path
+  2. webpack-dll-plugin 
+     - dll.config.js 配置文件entry,output
+     - 生成dll文件【vendor-mainfest.json、vendor.dll.js】
+     - DllReferencePlugin 方式在 `plugin`中添加dll配置
+     - 用clean-webpack-plugin 防止清除打包后的文件
+     - htmlwebpack 引入文件
+
+### optimization.removeAvailableModules
+
+默认关闭，父子共用一个module时，子chunks内删除该module
+
+## splitChunk
+
+### module
+
+js的模块化，webpack支持CJS，ES6等模块化规范；简单来说就是通过import引入等模块；
+
+Tells webpack to detect and remove modules from chunks when these modules are already included in all parents.
+
+### chunk
+
+webpack根据功能拆分出来的，有三种情况：
+
+- 项目的入口（entry）
+- 通过import()动态引入
+- 通过splitChunks拆分出来的代码
+
+### bundle
+
+bundle是打包出来后的文件，一般与chunk一一对应；
+
+### splitChunk.chunk
+
+- async 只拆分异步加载的模块（import()）
+- initial 表示只从模块入口拆分
+- all 两者包括
+
+### [splitChunk.cacheGroup](https://webpack.js.org/plugins/split-chunks-plugin/#splitchunkscachegroups)
+
+[参考](https://www.cnblogs.com/kwzm/p/10315080.html)
+
+```
+{
+	vendor: {
+		minChunk: number,
+		priority: number,
+	}
+}
+```
+
+### splitChunk.maxInitalRequest
+
+限制入口并行加载最大请求数，同时满足多个打包条件的，优先打包体积大的文件；
+
+### splitChunck.maxAsyncRequest
+
+限制异步模块内部的并行加载最大请求数，同时满足多个打包条件的，优先打包体积大的文件；
+

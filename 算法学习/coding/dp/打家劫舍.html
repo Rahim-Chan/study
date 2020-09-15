@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        /**
+ * @param {number[]} nums
+ * @return {number}
+ */
+        var rob = function (nums) {
+            const l = nums.length;
+            if (!l) return 0
+            const dp = new Array(l).fill(0)
+            dp[1] = nums[0]
+
+            for (let i = 2; i <= l; i++) {
+                dp[i] = Math.max(dp[i - 2] + nums[i - 1], dp[i - 1])
+            }
+            return dp[l]
+        };
+        var robOPT = function (nums) {
+            const l = nums.length;
+            if (!l) return 0
+            let prep = nums[0]
+            if (l === 1) return prep
+            let pre = Math.max(nums[1], nums[0])
+            for (let i = 2; i < l; i++) {
+                let tem = pre;
+                pre = Math.max(prep + nums[i], pre)
+                prep = tem;
+            }
+            return pre
+        };
+    </script>
+</body>
+
+</html>

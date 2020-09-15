@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- LeetCode 第 265 号问题：粉刷房子II -->
+    <!-- 
+        输入: [[1,5,3],[2,9,4]]
+        输出: 5
+        解释: 将 0 号房子粉刷成 0 号颜色，1 号房子粉刷成 2 号颜色。最少花费: 1 + 4 = 5; 
+        或者将 0 号房子粉刷成 2 号颜色，1 号房子粉刷成 0 号颜色。最少花费: 3 + 2 = 5. 
+     -->
+    <script>
+        minCostII([[1,5,3],[2,9,4]])
+        function minCostII(costs) {
+            if (!(costs.length && costs[0].length)) return 0
+            const h = costs.length;
+            let min1 = min2 = 0;
+            let minIndex = -1;
+            for (let i = 0; i < h; i++) {
+                const colos = costs[i];
+                let m1 = m2 = Infinity;
+                let ld = -1;
+                for (let j = 0; j < colos.length; j++) {
+                    //最新最小费用
+                    const cost = colos[j] + (j === minIndex ? min2 : min1);
+                    if (cost < m1) {
+                        //原本的最小，变成第二小
+                        m2 = m1
+                        m1 = cost
+                        ld = j
+                    } else if (cost < m2) {
+                        //替换第二小
+                        m2 = cost
+                    }                    
+                }
+                minIndex = ld
+                min1 = m1;
+                min2 = m2
+                
+            }
+        }
+    </script>
+</body>
+</html>
