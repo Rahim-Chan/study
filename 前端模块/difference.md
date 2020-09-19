@@ -14,7 +14,11 @@ https://juejin.im/post/6844903961128861704#heading-7
 
 # CommonJS(node.js)
 
+服务端、同步加载
+
 # AMD (require.js)
+
+浏览器端、异步加载、先后加载顺序要求
 
 # CMD(sea.js)
 
