@@ -22,5 +22,6 @@
   - Document.getElement 动态Node
   - querySelector 静态Node
 
-- 9.18
-  
+- 9.20
+  webpack的import()解析、部分功能【sourcemap、基本配置：entry、output、mode、】
+
