@@ -485,7 +485,7 @@ console.log(bar.getName())
 
 ### CSRF攻击（Cross-site request forgery）
 
-又名“**跨站请求伪造**”，打开黑客的网站，利用用户的登录状态发起请求。
+又名“**跨站请求伪造**”，打开黑客的网站，利用用户的登录状态发起请求。发生在第三方。
 
 #### 攻击对象
 
@@ -495,7 +495,8 @@ console.log(bar.getName())
 #### 防范
 
 - 设置cookie的SameSite模式（Strict，Lax，None）
-- 验证请求的来源站点（Referer，Origin）
+- **同源校验**-验证请求的来源站点（Referer，Origin）
+
 - CSRF Token，浏览器索取token（第三方站点无法获取），请求的时候带上。
 
 ## 浏览器中的网络 (未编辑)
@@ -880,6 +881,8 @@ foo()
 ##### 垃圾回收机制的优化
 
 scavenge，Mark-Sweep，Mark-compact都会导致**stop-the-world**（全停顿），会导致主线程占用时间过长，产生“卡顿”现象。因此V8引入**增量标记（Incremental Marking）**将回收任务分成很多小任务，在主线程穿插执行，避免长时间卡顿现象。
+
+面试快捷【https://mp.weixin.qq.com/s/vbG24Ogc5qMpTz-_Hz61KQ】
 
 
 

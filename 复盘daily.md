@@ -38,4 +38,5 @@
   
   tree-shaking: 不是银弹(效果不好继续+demo加深印象)
   
-  
+- 9.24 
+  Tree-shaking 实践
