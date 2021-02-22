@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <form action="http:// xxx.com/register" id="registerForm" method="post">
+        请输入用户名：<input type="text" name="userName" />
+        请输入密码：<input type="text" name="password" />
+
+        请输入手机号码：<input type="text" name="phoneNumber" />
+        <button>提交</button>
+    </form>
+
+    <script>
+        var strategies = {
+            isNonEmpty: function (value, errorMsg) {
+                if (value === '') {
+                    return errorMsg
+                }
+            },
+            minLength: function (value, length, errorMsg) { // 限制最小长度
+                if (value.length < length) {
+                    return errorMsg;
+                }
+            },
+        }
+        var Validator = function () {
+            this.cache = []
+        }
+        Validator.prototype.add = function (dom, rule, errorMsg) {
+            var ary = rule.split(':');
+            this.cache.push(function () {
+                var strategy = ary.shift();
+                ary.unshift(dom.value)
+                ary.push(errorMsg)
+                // console.log(strategies, strategy,'strategy')
+                return strategies[strategy].apply(dom, ary);
+            })
+        }
+        Validator.prototype.start = function () {
+            // console.log(this,cache,'cache')
+            for (var i = 0, validatorFunc; validatorFunc = this.cache[i++];) {
+                console.log(validatorFunc,'validatorFunc')
+                var msg = validatorFunc()
+                if (msg) {
+                    return msg;
+                }
+            }
+        }
+        var validataFunc = function () {
+            var validator = new Validator();
+            validator.add(registerForm.userName, 'isNonEmpty', '用户名不能为空');
+            validator.add(registerForm.password, 'minLength:6', 'length');
+            var errorMsg = validator.start(); // 获得校验结果
+            return errorMsg; // 返回校验结果
+        }
+        var registerForm = document.getElementById('registerForm');
+        registerForm.onsubmit = function () {
+            try {
+                var errorMsg = validataFunc(); // 如果errorMsg 有确切的返回值，说明未通过校验
+            } catch (err) {
+                console.log(err)
+            }
+            if (errorMsg) {
+                console.log(errorMsg);
+            }
+                return false; // 阻止表单提交
+        };
+
+    </script>
+</body>
+
+</html>

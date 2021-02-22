@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        var a = 'ABACDDCBA';
+        function sort(data) {
+            var res = ''
+            var left = 0, right = data.length-1;
+            while (left <= right) {
+                if (data[left] < data[right]) {
+                    res += data[left]
+                    left ++
+                } else if (data[left] < data[right]) {
+                    res += data[right]
+                    right --
+                } else {
+                    var i = left, j = right;
+                    while (i < j && data[i] === data[j]) {
+                        i++;
+                        j--
+                    }
+                    if (i === j) {
+                        res += data[left]
+                        left ++
+                        continue
+                    }
+                    if (data[i] > data[j]) {
+                        res += data[right]
+                        right --
+                    } else {
+                        res += data[left]
+                        left ++
+                    }
+                }
+            }
+            return res
+        }
+        console.log(sort(a))
+    </script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        var a = [-2,-1,123,3, 1,3,5,9,0,1, 5, 0, 9, 1];
+        function swap(items, leftIndex, rightIndex) {
+            var temp = items[leftIndex];
+            items[leftIndex] = items[rightIndex];
+            items[rightIndex] = temp;
+        }
+        function partition(items, left, right) {
+            var pivot = items[right]
+            var i = left-1;//i指向j上一次替换是的位置，即第一个大于povit的index
+
+            for (var j = left; j < right; j++) {
+                if (items[j] < pivot) {
+                    i++ 
+                    swap(items,j,i)
+                }
+                
+            }
+            swap(items, i+1, right)
+            return i+1;
+        }
+
+        
+        function quickSort(items, left = 0, right = items.length-1) {
+            // if (items.length < 2) return item
+            if (left <right) {
+                index = partition(items, left, right); //index returned 
+                quickSort(items, left, index-1);
+                quickSort(items, index+1, right);
+            }
+            return items;
+        }
+
+        
+        console.log(quickSort(a));
+    </script>
+</body>
+
+</html>

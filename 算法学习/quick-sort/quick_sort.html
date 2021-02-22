@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        var a = [3, 1, 5, 0, 9, 1];
+        function quickSort(arr) {
+            const len = arr.length
+            if (len < 2) return arr
+            const midIndex = (len-1)>>1;
+            const baseValue = arr.splice(midIndex, 1);
+            let left = [], right = []
+            for (var i = 0; i<arr.length;i++) {
+                var value = arr[i]
+                if (value < baseValue) {
+                    left.push(value)
+                } else {
+                    right.push(value)
+                }
+            }
+            return quickSort(left).concat(baseValue, quickSort(right))
+        }
+        
+        
+        console.log(quickSort(a));
+    </script>
+</body>
+
+</html>

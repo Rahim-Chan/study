@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        var a = [12,31,23,13,1,31,3,123,12,31,41,4,124,12,412,4];
+        function swap(arr, x, y) {
+            [arr[x], arr[y]] = [arr[y], arr[x]]
+        }
+        function parition(arr, start, end) {
+            var i = start,j = end;
+            var pivot = arr[start];
+            while (i < j) {
+                while (arr[i] <= pivot) {
+                    i++
+                }
+                while (arr[j] > pivot) {
+                    j--
+                }
+                if (i < j) {
+                    swap(arr, i, j)
+                    i++;
+                    j--
+                }
+            }
+            swap(arr, start, j)
+            return j
+        }
+        function qs(arr, left = 0, right = arr.length -1) {
+            if (left < right) {
+                var index = parition(arr, left, right)
+                qs(arr, left, index - 1)
+                qs(arr, index + 1, right)
+            }
+            return arr
+        }
+        console.log(qs(a));
+    </script>
+</body>
+</html>

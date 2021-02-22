@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        var a = [0,1,2,3,4,0,3,3,8,1,4,6,2,8,8,15,10,0,9,9,1,2,17,8,17,25,18,18,16,13,18,29,2,3,32,2,26,23,18,8,34,8,11,36,36,39,46,30,21,25,21,14,41,10,31,55,45,16,33,47,4,52,59,60,1,43,42,10,12,56,12,27,22,52,38,12,41,42,71,5,42,76,8,3,31,65,11,29,28,68,33,50,73,87,22,68,31,1,38,89]
+        function swap(arr,j,i) {
+            [arr[i],arr[j]] = [arr[j], arr[i]]
+        }
+        function partition(arr, start, end) {
+            var i = start, j = end;
+            var pivot = arr[start]
+            while (i <= j) {
+                while (arr[i] <= pivot) {
+                    i++
+                }
+                while (arr[j] > pivot) {
+                    j--
+                }
+                if (i < j) {
+                    swap(arr,j,i)
+                    j--
+                    i++
+                }
+            }
+            swap(arr, j, start)
+            return j
+        }
+        function qs(arr,start=0,end=arr.length-1) {
+           if (start < end) {
+               const index = partition(arr, start, end)
+               qs(arr, start, index-1)
+               qs(arr, index+1, end)
+           }
+           return arr
+        }
+        console.log(qs(a))
+    </script>
+</body>
+</html>

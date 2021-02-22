@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        function sort(str) {
+            var len = str.length;
+            // if (!len)
+            var left = 0;
+            var right = len - 1;
+            var res = '';
+            while (left <= right) {
+                if (str.charAt(left) < str.charAt(right)) {
+                    res += str.charAt(left)
+                    left ++
+                } else if (str.charAt(left) > str.charAt(right)) {
+                    res += str.charAt(right)
+                    console.log("right", right)
+                    right --
+                } else {
+                    var i = left;
+                    var j = right;
+                    while(i <j && str.charAt(i) === str.charAt(j)) {
+                        i++;
+                        j--;
+                    }
+                    console.log({i,j})
+                    if (i===j) {
+                        console.log(i, j)
+                        res += str.charAt(left);
+                        left ++;
+                        continue
+                    }
+                    if (str.charAt(i) < str.charAt(j)) {
+                        res += str.charAt(left)
+                        left ++
+                    }
+                    else {
+                        res += str.charAt(right)
+                        right --
+                    }
+                }
+                
+            }
+            return {res}
+        };
+        var a = 'ADCDEFBA'
+        console.log(a)
+        console.log(a,sort(a))
+    </script>
+</body>
+</html>

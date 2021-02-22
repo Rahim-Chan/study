@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        var a = [12,31,23,13,1,31,3,123,12,31,41,4,124,12,412,4];
+        function swap(arr, i, j) {
+            [arr[j], arr[i]] = [arr[i], arr[j]]
+        }
+        function parition(arr, start, end) {
+           var pivot = arr[end];
+           var pivotIndex = start;
+           var i = start;
+           for (; i < arr.length; i++) {
+               if (arr[i] < pivot) {
+                   swap(arr, i, pivotIndex)
+                   pivotIndex ++
+               }
+           }
+           swap(arr, pivotIndex, end)
+           return pivotIndex;
+        }
+        function quickSort(data,left = 0,right = data.length -1) {
+            if (left < right) {
+                var index = parition(data,left,right);
+                quickSort(data, left, index - 1)
+                quickSort(data, index + 1, right);
+            }
+            return data
+        } 
+        console.log(quickSort(a))
+    </script>
+</body>
+</html>

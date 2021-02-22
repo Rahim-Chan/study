@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        var a = [0,1,2,3,4,0,3,3,8,1,4,6,2,8,8,15,10,0,9,9,1,2,17,8,17,25,18,18,16,13,18,29,2,3,32,2,26,23,18,8,34,8,11,36,36,39,46,30,21,25,21,14,41,10,31,55,45,16,33,47,4,52,59,60,1,43,42,10,12,56,12,27,22,52,38,12,41,42,71,5,42,76,8,3,31,65,11,29,28,68,33,50,73,87,22,68,31,1,38,89]
+
+        function swap(arr, x, y) {
+            [arr[y], arr[x]] = [arr[x], arr[y]]
+        }
+        function parition(arr, left, right) {
+            let i = left, j = right;
+            let piovt = arr[left]
+            // console.log(arr)
+            while(i <= j) {
+                while (arr[i] <= piovt) {
+                    i++
+                }
+                while (arr[j] > piovt) {
+                    j--
+                }
+                if (i<j) {
+                    swap(arr,i,j)
+                    i++
+                    j--
+                } 
+            }
+            swap(arr,left,j)
+            return j
+        }
+        function quickSort(arr, left = 0, right = arr.length - 1) {            
+            if (left < right) {
+                var index = parition(arr, left, right)
+                quickSort(arr, left, index - 1)
+                quickSort(arr, index + 1, right)
+            }
+            return arr
+        }
+        console.log(quickSort(a))
+    </script>
+</body>
+
+</html>

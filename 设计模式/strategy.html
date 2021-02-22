@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        //es5
+        var strategy = {
+            'A': function(salary) {
+                return salary * 4
+            },
+            'B': function(salary) {
+                return salary * 5
+            },
+        }
+        var getBonus = function(level, salary) {
+            return strategy[level](salary)             
+        }
+        var money = getBonus("A", 2000)
+        //class
+        class Bonus {
+            constructor() {
+                this.salary = null;
+                this.strategy = null;
+            }
+            setSalary(salary) {
+                this.salary = salary
+            }
+            setStrategy(strategy) {
+                this.strategy = strategy
+            }
+            getBounus() {
+                return this.strategy.calculate(this.salary)
+            }
+        }
+        var perfomanceS = function() {}
+        perfomanceS.prototype.calculate = function(salary) {
+            return salary * 2
+        }
+        var bonus = new Bonus();
+        bonus.setStrategy(new perfomanceS())
+        bonus.setSalary(1000)
+        var res = bonus.getBounus()
+        console.log(money,res);
+    </script>
+</body>
+</html>

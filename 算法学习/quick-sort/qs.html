@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        var a = [3, 1, 5, 0, 9, 1];
+        function swap(items, leftIndex, rightIndex) {
+            var temp = items[leftIndex];
+            items[leftIndex] = items[rightIndex];
+            items[rightIndex] = temp;
+        }
+        function partition(items, left, right) {
+            var i = left; j = right;
+            var pivot = items[left]
+            while (i < j) {
+                while (items[i] <= pivot) {
+                    i++;
+                }
+                while (items[j] > pivot) {
+                    j--;
+                }
+                if (i < j) {
+                    swap(items, i, j); //sawpping two elements
+                    i++;
+                    j--;
+                }
+            }
+            swap(items, j, left)
+            return j;
+        }
+
+        function quickSort(items, left = 0, right = items.length - 1) {
+            if (items.length < 2) return item
+            if (left < right) {
+                index = partition(items, left, right); //index returned 
+                quickSort(items, left, index - 1);
+                quickSort(items, index+1, right);
+            }
+            return items;
+        }
+
+        console.log(quickSort(a));
+    </script>
+</body>
+
+</html>
